@@ -20,7 +20,7 @@ job_environments:
     NEWRELIC_APPNAME: P4 test-phobos Development
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
-  develop_environment: &develop_environment
+  source_environment: &develop_environment
     APP_HOSTPATH: nikosdev
     CONTAINER_PREFIX: planet4-nikosdev
     WP_DB_NAME_PREFIX: planet4-nikosdev_wordpress
