@@ -1,5 +1,4 @@
----
-version: 2
+version: 2.1
 
 defaults: &defaults
   docker:
@@ -21,6 +20,20 @@ job_environments:
     NEWRELIC_APPNAME: P4 test-phobos Development
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
+  develop_environment: &develop_environment
+    APP_HOSTPATH: nikosdev
+    CONTAINER_PREFIX: planet4-nikosdev
+    WP_DB_NAME_PREFIX: planet4-nikosdev_wordpress
+    APP_ENVIRONMENT: development
+    APP_HOSTNAME: k8s.p4.greenpeace.org
+    CLOUDSQL_INSTANCE: p4-develop-k8s
+    GOOGLE_PROJECT_ID: planet-4-151612
+    GCLOUD_CLUSTER: p4-development
+    HELM_NAMESPACE: develop
+    HELM_RELEASE: planet4-nikosdev
+    NEWRELIC_APPNAME: P4 NikosDev Development
+    WP_DB_NAME: planet4-nikosdev_wordpress_develop
+    WP_STATELESS_BUCKET: planet4-nikosdev-stateless-develop
 
 job_definitions:
   build_steps: &build_steps
@@ -149,9 +162,30 @@ jobs:
       <<: *develop_environment
     <<: *backstop_compare_steps
 
+  create-sync-sql:
+    <<: *defaults
+    environment:
+      <<: *source_environment
+    working_directory: /tmp/workspace/src
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+      - run: echo $SQLPROXY_KEY | base64 -d > key.json
+      - run: /home/circleci/sql_create_sync_file.sh
 
 workflow_definitions:
   develop_common: &develop_common
+    context: org-global
+    filters:
+      branches:
+        only: develop
+  sync_common: &sync_common
     context: org-global
     filters:
       branches:
@@ -179,3 +213,8 @@ workflows:
           <<: *develop_common
           requires:
             - deploy-develop
+
+  sync-sql:
+    jobs:
+      - create-sync-sql:
+          <<: *sync_common
