@@ -20,7 +20,7 @@ job_environments:
     NEWRELIC_APPNAME: P4 test-phobos Development
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
-  source_environment: &develop_environment
+  source_environment: &source_environment
     APP_HOSTPATH: nikosdev
     CONTAINER_PREFIX: planet4-nikosdev
     WP_DB_NAME_PREFIX: planet4-nikosdev_wordpress
@@ -171,7 +171,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-
       - run:
           name: Configure
           command: |
@@ -189,7 +188,7 @@ workflow_definitions:
     context: org-global
     filters:
       branches:
-        only: develop
+        ignore: develop
 
 workflows:
   version: 2
@@ -213,7 +212,6 @@ workflows:
           <<: *develop_common
           requires:
             - deploy-develop
-
   sync-sql:
     jobs:
       - create-sync-sql:
