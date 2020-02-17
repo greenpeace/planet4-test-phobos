@@ -148,7 +148,7 @@ jobs:
       <<: *develop_environment
     <<: *backstop_compare_steps
 
-  data-create:
+  data-sync:
     <<: *defaults
     environment:
       <<: *common_environment
@@ -162,23 +162,7 @@ jobs:
           name: Configure
           command: |
             ${HOME}/scripts/activate-gcloud-account.sh
-      - run: /home/circleci/wp-import-dump.sh
-
-  data-import:
-    <<: *defaults
-    environment:
-      <<: *common_environment
-      <<: *develop_environment
-    working_directory: /tmp/workspace/src
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run:
-          name: Configure
-          command: |
-            ${HOME}/scripts/activate-gcloud-account.sh
-      - run: /home/circleci/wp-import.sh
+      - run: /home/circleci/sync_to_test_site.sh
 
 workflow_definitions:
   develop_common: &develop_common
@@ -201,14 +185,10 @@ workflows:
           <<: *develop_common
           requires:
             - build-branch
-      - data-create:
+      - data-sync:
           <<: *develop_common
           requires:
             - deploy-develop
-      - data-import:
-          <<: *develop_common
-          requires:
-            - data-create
       - test-develop:
           <<: *develop_common
           requires:
