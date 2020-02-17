@@ -7,6 +7,7 @@
 		"greenpeace/planet4-plugin-gutenberg-blocks" : "dev-master",
 		"greenpeace/planet4-plugin-gutenberg-engagingnetworks" : "dev-master"
 	},
+	"data_from": "international",
 	"scripts": {
 		"site:custom" : []
 	}
