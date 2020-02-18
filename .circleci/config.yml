@@ -2,7 +2,7 @@ version: 2.1
 
 defaults: &defaults
   docker:
-    - image: greenpeaceinternational/p4-builder:wpimport
+    - image: greenpeaceinternational/p4-builder:latest
 
 job_environments:
   common_environment: &common_environment
