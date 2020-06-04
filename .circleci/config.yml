@@ -3,7 +3,6 @@ version: 2.1
 defaults: &defaults
   docker:
     - image: greenpeaceinternational/p4-builder:latest
-
 job_environments:
   common_environment: &common_environment
     APP_HOSTPATH: test-phobos
@@ -20,6 +19,7 @@ job_environments:
     NEWRELIC_APPNAME: P4 test-phobos Development
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
+
 
 job_definitions:
   build_steps: &build_steps
@@ -147,7 +147,6 @@ jobs:
       <<: *common_environment
       <<: *develop_environment
     <<: *backstop_compare_steps
-
   data-sync:
     <<: *defaults
     environment:
@@ -164,6 +163,7 @@ jobs:
             ${HOME}/scripts/activate-gcloud-account.sh
       - run: /home/circleci/sync_to_test_site.sh
 
+
 workflow_definitions:
   develop_common: &develop_common
     context: org-global
@@ -179,11 +179,10 @@ workflows:
           <<: *develop_common
       - build-branch:
           <<: *develop_common
-          requires:
-            - backstop-history-develop
       - deploy-develop:
           <<: *develop_common
           requires:
+            - backstop-history-develop
             - build-branch
       - data-sync:
           <<: *develop_common
