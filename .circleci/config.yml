@@ -1,3 +1,4 @@
+---
 version: 2.1
 
 defaults: &defaults
@@ -22,6 +23,36 @@ job_environments:
 
 
 job_definitions:
+  visualtests_reference_steps: &visualtests_reference_steps
+    docker:
+      - image: greenpeaceinternational/planet4-backstop:latest
+    working_directory: /src
+    steps:
+      - run: ./checkout.sh
+      - run: ./mergescenarios.sh
+      - run: mkdir /app/ -p
+      - run: ./makehistory.sh
+      - store_artifacts:
+          path: /app/backstop_data
+      - persist_to_workspace:
+          root: /app
+          paths:
+            - backstop_data
+
+  visualtests_compare_steps: &visualtests_compare_steps
+    docker:
+      - image: greenpeaceinternational/planet4-backstop:latest
+    working_directory: /src
+    steps:
+      - run: ./checkout.sh
+      - run: ./mergescenarios.sh
+      - run: mkdir /app/ -p
+      - attach_workspace:
+          at: /app
+      - run: ./makecomparison.sh
+      - store_artifacts:
+          path: /app/backstop_data
+
   build_steps: &build_steps
     working_directory: ~/
     steps:
@@ -85,38 +116,20 @@ job_definitions:
       - run: activate-gcloud-account.sh
       - run: BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num) make -j2 deploy
 
-  backstop_history_steps: &backstop_history_steps
-    docker:
-      - image: greenpeaceinternational/planet4-backstop:latest
-    working_directory: /src
-    steps:
-      - run: ./checkout.sh
-      - run: ./mergescenarios.sh
-      - run: mkdir /app/ -p
-      - run: ./makehistory.sh
-      - store_artifacts:
-          path: /app/backstop_data
-      - persist_to_workspace:
-          root: /app
-          paths:
-            - backstop_data
-
-  backstop_compare_steps: &backstop_compare_steps
-    docker:
-      - image: greenpeaceinternational/planet4-backstop:latest
-    working_directory: /src
-    steps:
-      - run: ./checkout.sh
-      - run: ./mergescenarios.sh
-      - run: mkdir /app/ -p
-      - attach_workspace:
-          at: /app
-      - run: ./makecomparison.sh
-      - store_artifacts:
-          path: /app/backstop_data
-
 jobs:
-  build-branch:
+  visualtests-reference-develop:
+    environment:
+      <<: *common_environment
+      <<: *develop_environment
+    <<: *visualtests_reference_steps
+
+  visualtests-compare-develop:
+    environment:
+      <<: *common_environment
+      <<: *develop_environment
+    <<: *visualtests_compare_steps
+
+  build-develop:
     <<: *defaults
     environment:
       <<: *common_environment
@@ -135,18 +148,6 @@ jobs:
       <<: *common_environment
       <<: *develop_environment
     <<: *deploy_steps
-
-  backstop-history-develop:
-    environment:
-      <<: *common_environment
-      <<: *develop_environment
-    <<: *backstop_history_steps
-
-  backstop-compare-develop:
-    environment:
-      <<: *common_environment
-      <<: *develop_environment
-    <<: *backstop_compare_steps
   data-sync:
     <<: *defaults
     environment:
@@ -163,7 +164,6 @@ jobs:
             ${HOME}/scripts/activate-gcloud-account.sh
       - run: /home/circleci/sync_to_test_site.sh
 
-
 workflow_definitions:
   develop_common: &develop_common
     context: org-global
@@ -172,27 +172,26 @@ workflow_definitions:
         only: develop
 
 workflows:
-  version: 2
   develop:
     jobs:
-      - backstop-history-develop:
+      - visualtests-reference-develop:
           <<: *develop_common
-      - build-branch:
+      - build-develop:
           <<: *develop_common
       - deploy-develop:
           <<: *develop_common
           requires:
-            - backstop-history-develop
-            - build-branch
-      - data-sync:
-          <<: *develop_common
-          requires:
-            - deploy-develop
+            - build-develop
+            - visualtests-reference-develop
       - test-develop:
           <<: *develop_common
           requires:
             - deploy-develop
-      - backstop-compare-develop:
+      - visualtests-compare-develop:
+          <<: *develop_common
+          requires:
+            - deploy-develop
+      - data-sync:
           <<: *develop_common
           requires:
             - deploy-develop
