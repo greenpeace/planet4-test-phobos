@@ -4,6 +4,9 @@ version: 2.1
 defaults: &defaults
   docker:
     - image: greenpeaceinternational/p4-builder:latest
+
+orbs:
+  slack: circleci/slack@3.4.2
 job_environments:
   common_environment: &common_environment
     APP_HOSTPATH: test-phobos
@@ -43,6 +46,10 @@ job_definitions:
     docker:
       - image: greenpeaceinternational/planet4-backstop:latest
     working_directory: /src
+    parameters:
+      notify:
+        type: boolean
+        default: false
     steps:
       - run: ./checkout.sh
       - run: ./mergescenarios.sh
@@ -52,6 +59,14 @@ job_definitions:
       - run: ./makecomparison.sh
       - store_artifacts:
           path: /app/backstop_data
+      - when:
+          condition: << parameters.notify >>
+          steps:
+            # Notify p4-activity-ci
+            - slack/status:
+                fail_only: true
+                channel: C015MQGG3KQ
+                webhook: ${SLACK_NRO_WEBHOOK}
 
   build_steps: &build_steps
     working_directory: ~/
@@ -110,11 +125,22 @@ job_definitions:
 
   deploy_steps: &deploy_steps
     working_directory: ~/
+    parameters:
+      notify:
+        type: boolean
+        default: false
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - run: activate-gcloud-account.sh
       - run: BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num) make -j2 deploy
+      - when:
+          condition: << parameters.notify >>
+          steps:
+            # Notify p4-activity-ci
+            - slack/status:
+                channel: C015MQGG3KQ
+                webhook: ${SLACK_NRO_WEBHOOK}
 
 jobs:
   visualtests-reference-develop:
