@@ -3,9 +3,8 @@
 	"description": "Greenpeace P4 test-phobos",
 	"license": "MIT",
 	"require": {
-		"greenpeace/planet4-master-theme" : "dev-planet-5082",
-		"greenpeace/planet4-plugin-gutenberg-blocks" : "dev-planet-5082",
-		"greenpeace/planet4-plugin-gutenberg-engagingnetworks" : "dev-planet-5082"
+		"greenpeace/planet4-master-theme" : "dev-planet-5294",
+		"greenpeace/planet4-plugin-gutenberg-blocks" : "dev-planet-5294"
 	},
 	"data_from": "international",
 	"scripts": {
