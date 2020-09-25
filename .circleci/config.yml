@@ -82,10 +82,17 @@ job_definitions:
       - run: |
           if [[ -d source/cache ]]; then ls -al source/cache; fi
       - run: activate-gcloud-account.sh
-      - run: mkdir -p /tmp/workspace/var
-      - run: mkdir -p /tmp/workspace/src
+      - run: mkdir -p /tmp/workspace/var /tmp/workspace/src
       - run: echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make
+      - run: make test
+      - run: make rewrite
+      - run: make checkout
+      - run: make rewrite-app-repos
+      - run: make copy
+      - run: make bake
+      - run: make persist
+      - run: make build
+      - run: make push
       - run:
           name: Notify failure
           when: on_fail
@@ -129,11 +136,34 @@ job_definitions:
       notify:
         type: boolean
         default: false
+      is_prod:
+        type: boolean
+        default: false
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - run: activate-gcloud-account.sh
       - run: BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num) make deploy
+      - when:
+          condition: << parameters.is_prod >>
+          steps:
+            - run:
+                name: Initiate finish-staging (approve rollback but it won't really)
+                command: |
+                  url="https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job"
+
+                  # Get workflow details
+                  workflow=$(curl -s -u "${CIRCLE_TOKEN}": -X GET --header "Content-Type: application/json" "$url")
+                  # Get approval job id
+                  job_id=$(echo "$workflow" | jq -r '.items[] | select(.name=="rollback-staging") | .approval_request_id ')
+
+                  echo "Finishing staging."
+                  echo "Job ID: ${job_id}"
+                  curl \
+                    --header "Content-Type: application/json" \
+                    -u "${CIRCLE_TOKEN}:" \
+                    -X POST \
+                    "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/approve/${job_id}"
       - when:
           condition: << parameters.notify >>
           steps:
@@ -191,7 +221,7 @@ jobs:
       - run: /home/circleci/sync_to_test_site.sh
 
 workflow_definitions:
-  develop_common: &develop_common
+  on_develop_commit: &on_develop_commit
     context: org-global
     filters:
       branches:
@@ -201,23 +231,23 @@ workflows:
   develop:
     jobs:
       - visualtests-reference-develop:
-          <<: *develop_common
+          <<: *on_develop_commit
       - build-develop:
-          <<: *develop_common
+          <<: *on_develop_commit
       - deploy-develop:
-          <<: *develop_common
+          <<: *on_develop_commit
           requires:
             - build-develop
             - visualtests-reference-develop
       - test-develop:
-          <<: *develop_common
+          <<: *on_develop_commit
           requires:
             - deploy-develop
       - visualtests-compare-develop:
-          <<: *develop_common
+          <<: *on_develop_commit
           requires:
             - deploy-develop
       - data-sync:
-          <<: *develop_common
+          <<: *on_develop_commit
           requires:
             - deploy-develop
