@@ -40,7 +40,8 @@ job_definitions:
   visualtests_reference_steps: &visualtests_reference_steps
     docker:
       - image: greenpeaceinternational/planet4-backstop:latest
-        auth: &docker_auth
+        auth:
+          <<: *docker_auth
     working_directory: /src
     steps:
       - run: ./checkout.sh
@@ -57,7 +58,8 @@ job_definitions:
   visualtests_compare_steps: &visualtests_compare_steps
     docker:
       - image: greenpeaceinternational/planet4-backstop:latest
-        auth: &docker_auth
+        auth:
+          <<: *docker_auth
     working_directory: /src
     parameters:
       notify:
@@ -126,7 +128,8 @@ job_definitions:
       - image: gcr.io/planet-4-151612/p4-codeception:build-12
       - name: selenium
         image: selenium/standalone-chrome-debug:3.141.59-oxygen
-        auth: &docker_auth
+        auth:
+          <<: *docker_auth
     steps:
       - checkout
       - run: if [ ! -d "tests" ] || [ ! "$(ls -A tests)" ]; then circleci-agent step halt; fi
