@@ -144,10 +144,6 @@ job_definitions:
       - run: make persist
       - run: make build
       - run: make push
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Build" notify-job-failure.sh
       - save_cache:
           key: composer-v5-{{ .Branch }}-{{ .Revision }}-{{ .BuildNum }}
           paths:
@@ -274,7 +270,7 @@ jobs:
           name: Configure
           command: |
             activate-gcloud-account.sh
-      - run: /home/circleci/sync_to_test_site.sh
+      - run: sync_to_test_site.sh
 
 workflow_definitions:
   on_develop_commit: &on_develop_commit
