@@ -9,5 +9,6 @@
 	"data_from": "international",
 	"scripts": {
 		"site:custom": []
-	}
+	},
+	"repositories": []
 }
