@@ -6,6 +6,9 @@
 		"greenpeace/planet4-master-theme": "dev-master",
 		"greenpeace/planet4-plugin-gutenberg-blocks": "dev-master"
 	},
+	"extra": {
+		"wp-version": "5.8.3"
+	},
 	"data_from": "international",
 	"scripts": {
 		"site:custom": []
