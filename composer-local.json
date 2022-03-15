@@ -6,7 +6,7 @@
 		"greenpeace/planet4-master-theme": "7",
 		"greenpeace/planet4-plugin-gutenberg-blocks": "dev-master",
 		"plugins/sitepress-multilingual-cms": "*",
-                "plugins/wpml-string-translation": "*"
+		"plugins/wpml-string-translation": "*"
 	},
 	"extra": {
 		"wp-version": "5.8.3"
@@ -36,7 +36,7 @@
 				"version": 7,
 				"dist": {
 					"type": "zip",
-					"url": "https://storage.googleapis.com/planet4-packages/planet4-master-theme/da287f79c813b6e37664ee966684aff3be385c72.zip"
+					"url": "https://storage.googleapis.com/planet4-packages/planet4-master-theme/64fccc940db9742043626c4898af53596fc80223.zip"
 				}
 			}
 		}
