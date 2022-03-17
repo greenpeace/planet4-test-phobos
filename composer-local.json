@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"require": {
 		"greenpeace/planet4-master-theme": "7",
-		"greenpeace/planet4-plugin-gutenberg-blocks": "dev-master",
+		"greenpeace/planet4-plugin-gutenberg-blocks": "7",
 		"plugins/sitepress-multilingual-cms": "*",
 		"plugins/wpml-string-translation": "*"
 	},
@@ -37,6 +37,20 @@
 				"dist": {
 					"type": "zip",
 					"url": "https://storage.googleapis.com/planet4-packages/planet4-master-theme/4ad8df65a959f273b95d7f332158d4c1f7130a9e.zip"
+				}
+			}
+		},
+		{
+			"type": "package",
+			"package": {
+				"name": "greenpeace/planet4-plugin-gutenberg-blocks",
+				"type": "wordpress-plugin",
+				"autoload": null,
+				"extra": null,
+				"version": 7,
+				"dist": {
+					"type": "zip",
+					"url": "https://storage.googleapis.com/planet4-packages/planet4-plugin-gutenberg-blocks/5f4c9c04be11fec27ddfa3258aa282e1a37b099d.zip"
 				}
 			}
 		}
