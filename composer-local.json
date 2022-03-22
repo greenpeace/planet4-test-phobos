@@ -8,9 +8,6 @@
 		"plugins/sitepress-multilingual-cms": "*",
 		"plugins/wpml-string-translation": "*"
 	},
-	"extra": {
-		"wp-version": "5.8.3"
-	},
 	"data_from": "international",
 	"scripts": {
 		"site:custom": []
