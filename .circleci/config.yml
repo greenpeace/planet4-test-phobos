@@ -33,6 +33,7 @@ job_environments:
     HELM_RELEASE: planet4-test-phobos
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
+    CHART_VERSION: 0.8.25-alpha1
 
 
 
