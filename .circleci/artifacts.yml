@@ -9,7 +9,7 @@ job_environments:
     CLOUDSQL_INSTANCE: p4-develop-k8s
     GOOGLE_PROJECT_ID: planet-4-151612
     GCLOUD_CLUSTER: p4-development
-    HELM_NAMESPACE: develop
+    HELM_NAMESPACE: test-phobos
     HELM_RELEASE: planet4-test-phobos
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
