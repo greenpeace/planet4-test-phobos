@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo "Sync ElasticPress..."
-wp elasticpress sync --setup --force --yes
+wp elasticpress sync --setup --force --yes || true
