@@ -3,6 +3,26 @@
 	"description": "Greenpeace P4 test-phobos",
 	"license": "MIT",
 	"require": {
-		"greenpeace/planet4-master-theme": "dev-main"
-	}
+		"greenpeace/planet4-master-theme": "7"
+	},
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "greenpeace/planet4-master-theme",
+				"type": "wordpress-theme",
+				"autoload": {
+					"psr-4": {
+						"P4\\MasterTheme\\": "src/"
+					}
+				},
+				"extra": null,
+				"version": 7,
+				"dist": {
+					"type": "zip",
+					"url": "https://storage.googleapis.com/planet4-packages/planet4-master-theme/a4c7a5cdc4280f02c577505ef80858ebbb06c4c1.zip"
+				}
+			}
+		}
+	]
 }
