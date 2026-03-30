@@ -48,7 +48,6 @@ job_environments:
     HELM_RELEASE: planet4-test-phobos
     WP_DB_NAME: planet4-testphob_wordpress_develop
     WP_STATELESS_BUCKET: planet4-test-phobos-stateless-develop
-    MIN_REPLICA_COUNT: 2
 
 
 commands:
@@ -160,10 +159,7 @@ job_definitions:
 
 jobs:
   build-develop:
-    docker:
-      - image: greenpeaceinternational/p4-builder:php8.3
-        auth:
-          <<: *docker_auth
+    <<: *defaults
     environment:
       <<: *common_environment
       <<: *develop_environment
